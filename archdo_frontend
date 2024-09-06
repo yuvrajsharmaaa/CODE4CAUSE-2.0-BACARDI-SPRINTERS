@@ -1,0 +1,65 @@
+import { useState } from "react";
+
+function PersonalityTest() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [personalityType, setPersonalityType] = useState("");
+  const [recommendedColor, setRecommendedColor] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch('http://localhost:8000/api/personality-tests/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, personality_type: personalityType }),
+    });
+    const data = await response.json();
+    setRecommendedColor(data.recommended_color);
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="name">Name</label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+          />
+        </div>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+          />
+        </div>
+        <div>
+          <label htmlFor="personality">Personality Type</label>
+          <select
+            id="personality"
+            value={personalityType}
+            onChange={(e) => setPersonalityType(e.target.value)}
+          >
+            <option value="">Select your personality type</option>
+            <option value="ENFJ">ENFJ - The Protagonist</option>
+            <option value="ENFP">ENFP - The Campaigner</option>
+            {/* Add other options here */}
+          </select>
+        </div>
+        <button type="submit">Get Color Recommendations</button>
+      </form>
+      {recommendedColor && <div>Your recommended color is: {recommendedColor}</div>}
+    </div>
+  );
+}
+
+export default PersonalityTest;
